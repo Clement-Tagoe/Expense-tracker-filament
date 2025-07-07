@@ -20,6 +20,6 @@ class CreateTransaction extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        return TransactionResource::getUrl('index');
+        return $this->getResource()::getUrl('index');
     }
 }

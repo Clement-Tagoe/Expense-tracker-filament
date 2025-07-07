@@ -10,7 +10,9 @@ use Filament\Tables\Table;
 use App\Enums\CategoryTypeEnum;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Auth;
+use Filament\Tables\Filters\SelectFilter;
 use App\Filament\Resources\CategoryResource\Pages;
+use App\Filament\Resources\CategoryResource\Widgets\CategoryStatsWidget;
 
 
 class CategoryResource extends Resource
@@ -48,16 +50,25 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->sortable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime(),
             ])
             ->filters([
-                //
+                SelectFilter::make('type')
+                ->options([
+                    'expense' => 'Expense', 
+                    'income' => 'Income'
+                ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make()
+                ])->icon('heroicon-m-ellipsis-horizontal')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -72,6 +83,13 @@ class CategoryResource extends Resource
             //
         ];
     }
+
+    public static function getWidgets(): array
+{
+    return [
+        CategoryStatsWidget::class,
+    ];
+}
 
     public static function getPages(): array
     {
